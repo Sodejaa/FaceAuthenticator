@@ -1,4 +1,4 @@
-# Face Recognition App
+# FaceAuthenticator
 
 This is a simple PyQt-based application that performs face recognition using the DeepFace library. The application captures video from the user's camera, allows them to add new faces to the dataset, and toggles face recognition on/off.
 
