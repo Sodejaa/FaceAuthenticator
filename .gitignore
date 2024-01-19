@@ -1,2 +1,3 @@
 faces/*
 !faces/.gitkeep
+!faces/test.jpg

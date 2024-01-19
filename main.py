@@ -1,5 +1,6 @@
 import sys
 import cv2
+import os
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtCore import Qt, QTimer
@@ -63,12 +64,9 @@ class FaceRecognitionApp(QWidget):
             # Save the captured frame as an image file in the 'faces' folder
             cv2.imwrite(f'faces/face{self.facenum}.jpg', frame)
             print(f"Picture taken and saved as 'faces/face{self.facenum}.jpg'")
-            
-            # Uncomment the following lines if you want to display "Face Saved" text for 2 seconds
-            # cv2.putText(frame, "Face Saved", (5, 30), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 2)
-            # self.display_frame(frame)
 
             self.facenum += 1
+            self.load_faces()
 
     def toggle_face_recognition(self):
         # Toggle face recognition status
@@ -102,16 +100,30 @@ class FaceRecognitionApp(QWidget):
 
             # Display the frame in the GUI
             self.display_frame(frame)
+            
 
     def check_face(self, frame):
-        # Perform face recognition using DeepFace library
-        try:
-            if DeepFace.verify(frame, test_face)['verified']:
-                self.face_found = True
-            else:
-                self.face_found = False
-        except ValueError:
-            self.face_found = False
+        # Iterate over all faces dynamically loaded during runtime
+        for userface in self.faces:
+            try:
+                if DeepFace.verify(frame, userface)['verified']:
+                    self.face_found = True
+                    return  # Exit the loop if a face is found
+            except ValueError:
+                pass  # Continue to the next face if there is an error
+        self.face_found = False
+            
+    def load_faces(self):
+    # Load faces from the 'faces' folder dynamically
+        faces_folder = 'faces'
+        self.faces = []
+
+        for face_filename in os.listdir(faces_folder):
+            if face_filename.endswith(('.jpg', '.jpeg', '.png')):
+                face_path = os.path.join(faces_folder, face_filename)
+                face = cv2.imread(face_path)
+                if face is not None:
+                    self.faces.append(face)
 
     def display_frame(self, frame):
         # Convert the OpenCV frame to a QImage and display it in the GUI
@@ -124,6 +136,6 @@ class FaceRecognitionApp(QWidget):
 if __name__ == '__main__':
     # Initialize the PyQt application, load a test face image, and create the main application window
     app = QApplication(sys.argv)
-    test_face = cv2.imread(r'faces\test1.jpg')
     main_window = FaceRecognitionApp()
+    main_window.load_faces()  # Load faces at the beginning
     sys.exit(app.exec_())
