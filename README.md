@@ -37,7 +37,7 @@ This is a simple PyQt-based application that performs face recognition using the
 
 ## Usage
 
-- Click the "Add New Face" button to capture and save a new face image. **Only works with the 'test1.jpg' at the moment (you can upload your own test1.jpg)**.
+- Click the "Add New Face" button to capture and save a new face image.
 - Click the "Start/Stop Face Recognition" button to toggle the face recognition system.
 - Click the "Quit" button to close the application.
 
